@@ -2,133 +2,77 @@
  * =========================================================================
  * 🏋️ GYM COACH API — Скрипт синхронизации тренировок с Google Таблицей
  * Вкладка: "New Gym"
+ * 
+ * Логика:
+ * - Предпоследний столбец = Прошлая тренировка (только для чтения)
+ * - Последний столбец = План на сегодня (то, что заполнил тренер)
  * =========================================================================
  */
 
 const CONFIG = {
-  SHEET_NAME: "New Gym",        // Имя вкладки с тренировками
-  HEADER_COLOR: "#2ea043",      // Цвет шапки для завершенной тренировки (зеленый)
-  HEADER_TEXT_COLOR: "#ffffff"  // Цвет текста шапки
+  SHEET_NAME: "New Gym",
+  HEADER_COLOR: "#2ea043",
+  HEADER_TEXT_COLOR: "#ffffff"
 };
 
-/**
- * 1. GET-запрос: отдаёт клиенту список упражнений, прошлую тренировку и план на сегодня
- */
 function doGet(e) {
   try {
     const sheet = getWorkSheet();
     const blockNum = (e && e.parameter && e.parameter.block) ? parseInt(e.parameter.block) : 1;
     const data = parseWorkoutBlock(sheet, blockNum);
-
-    return createJsonResponse({
-      success: true,
-      block: blockNum,
-      data: data
-    });
+    return createJsonResponse({ success: true, block: blockNum, data: data });
   } catch (err) {
-    return createJsonResponse({
-      success: false,
-      error: err.toString(),
-      stack: err.stack
-    });
+    return createJsonResponse({ success: false, error: err.toString() });
   }
 }
 
-/**
- * 2. POST-запрос: записывает результаты выполненной тренировки в таблицу
- */
 function doPost(e) {
   try {
     const sheet = getWorkSheet();
-    let payload = {};
-
-    if (e && e.postData && e.postData.contents) {
-      payload = JSON.parse(e.postData.contents);
-    } else if (e && e.parameter) {
-      payload = e.parameter;
-    }
-
+    let payload = e && e.postData && e.postData.contents ? JSON.parse(e.postData.contents) : (e.parameter || {});
     const saveResult = saveWorkoutToSheet(sheet, payload);
-
-    return createJsonResponse({
-      success: true,
-      message: "Тренировка успешно сохранена в таблицу!",
-      result: saveResult
-    });
+    return createJsonResponse({ success: true, message: "Тренировка успешно сохранена!", result: saveResult });
   } catch (err) {
-    return createJsonResponse({
-      success: false,
-      error: err.toString(),
-      stack: err.stack
-    });
+    return createJsonResponse({ success: false, error: err.toString() });
   }
 }
 
-/**
- * Вспомогательная функция для формирования JSON-ответа
- */
 function createJsonResponse(data) {
-  return ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
 }
 
-/**
- * Получение нужного листа таблицы
- */
 function getWorkSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) {
-    // Поиск без учета регистра
     const sheets = ss.getSheets();
     for (let i = 0; i < sheets.length; i++) {
-      if (sheets[i].getName().trim().toLowerCase() === CONFIG.SHEET_NAME.toLowerCase()) {
-        return sheets[i];
-      }
+      if (sheets[i].getName().trim().toLowerCase() === CONFIG.SHEET_NAME.toLowerCase()) return sheets[i];
     }
-    // Если вкладка не найдена, берем самый первый лист
     sheet = sheets[0];
   }
   return sheet;
 }
 
-/**
- * Парсинг упражнений, подходов и авто-прогрессии (+2 повтора)
- */
 function parseWorkoutBlock(sheet, blockNum) {
   const lastRow = sheet.getLastRow();
   const lastCol = sheet.getLastColumn();
-
-  if (lastRow < 5 || lastCol < 2) {
-    throw new Error("Таблица пуста или содержит слишком мало строк.");
-  }
-
-  // Считываем все значения таблицы
   const values = sheet.getRange(1, 1, lastRow, lastCol).getValues();
 
-  // Ищем границы "Блок 1" и "Блок 2"
-  let block1Row = -1;
-  let block2Row = -1;
-
+  let block1Row = -1, block2Row = -1;
   for (let r = 0; r < values.length; r++) {
     const cellVal = String(values[r][0] || "").trim().toLowerCase();
-    if (cellVal.indexOf("блок 1") !== -1 || cellVal.indexOf("блок1") !== -1) {
-      block1Row = r;
-    } else if (cellVal.indexOf("блок 2") !== -1 || cellVal.indexOf("блок2") !== -1) {
-      block2Row = r;
-    }
+    if (cellVal.indexOf("блок 1") !== -1 || cellVal.indexOf("блок1") !== -1) block1Row = r;
+    else if (cellVal.indexOf("блок 2") !== -1 || cellVal.indexOf("блок2") !== -1) block2Row = r;
   }
-
   if (block1Row === -1) block1Row = 0;
 
   const startRow = (blockNum === 2 && block2Row !== -1) ? block2Row : block1Row;
   const endRow = (blockNum === 1 && block2Row !== -1) ? block2Row : values.length;
-
-  // Строка с датой (шапка)
   const dateRowIdx = startRow + 1;
 
-  // Ищем столбцы с данными (Столбец 0 - Название, Столбец 1 - База, Столбцы >= 2 - тренировки)
-  let maxColWithData = 1;
+  // Находим все столбцы с данными для этого блока
+  const colsWithData = [];
   for (let c = 2; c < lastCol; c++) {
     let hasData = false;
     for (let r = startRow + 2; r < endRow; r++) {
@@ -138,59 +82,48 @@ function parseWorkoutBlock(sheet, blockNum) {
       }
     }
     if (hasData) {
-      maxColWithData = c;
+      colsWithData.push(c);
     }
   }
 
-  // Проверяем статус последнего столбца
-  let lastColHeader = String(values[dateRowIdx][maxColWithData] || "").trim().toLowerCase();
-  let isLastColDone = (lastColHeader.indexOf("готово") !== -1 || lastColHeader.indexOf("done") !== -1);
-
+  // Два последних столбца: предпоследний = прошлая, последний = сегодня
   let prevColIdx = -1;
   let targetColIdx = -1;
-  let isAutoGenerated = false;
 
-  if (isLastColDone || maxColWithData <= 2) {
-    // Тренер еще не расписал новый столбец -> включаем авто-прогрессию +2 повтора!
-    prevColIdx = maxColWithData;
-    targetColIdx = maxColWithData + 1;
-    isAutoGenerated = true;
+  if (colsWithData.length >= 2) {
+    prevColIdx = colsWithData[colsWithData.length - 2];
+    targetColIdx = colsWithData[colsWithData.length - 1];
+  } else if (colsWithData.length === 1) {
+    prevColIdx = 1; // Столбец B (база)
+    targetColIdx = colsWithData[0];
   } else {
-    // В последнем столбце уже есть свежий план от тренера
-    prevColIdx = maxColWithData - 1;
-    targetColIdx = maxColWithData;
-    isAutoGenerated = false;
+    prevColIdx = 1;
+    targetColIdx = 1;
   }
 
-  // Собираем упражнения и подходы
   const exercises = [];
   let currentExercise = null;
 
   for (let r = startRow + 2; r < endRow; r++) {
     const rawName = String(values[r][0] || "").trim();
-
     if (rawName && !rawName.toLowerCase().startsWith("блок")) {
       if (currentExercise && currentExercise.sets.length > 0) {
         exercises.push(currentExercise);
       }
-      currentExercise = {
-        name: rawName,
-        sets: []
-      };
+      currentExercise = { name: rawName, sets: [] };
     }
 
     if (currentExercise) {
       const prevVal = prevColIdx >= 0 ? String(values[r][prevColIdx] || "").trim() : "";
+      const targetVal = targetColIdx >= 0 ? String(values[r][targetColIdx] || "").trim() : "";
       const baseVal = String(values[r][1] || "").trim();
-      let targetVal = (!isAutoGenerated && targetColIdx < lastCol) ? String(values[r][targetColIdx] || "").trim() : "";
 
       if (prevVal || targetVal || baseVal) {
         currentExercise.sets.push({
-          row: r + 1, // Номер строки в Google Таблице (1-based)
+          row: r + 1,
           setNum: currentExercise.sets.length + 1,
-          prev: prevVal || baseVal,
-          target: targetVal || prevVal || baseVal,
-          isPlus2: false
+          prev: prevVal || baseVal || "—",
+          target: targetVal || prevVal || baseVal || ""
         });
       }
     }
@@ -200,24 +133,8 @@ function parseWorkoutBlock(sheet, blockNum) {
     exercises.push(currentExercise);
   }
 
-  // Применяем правило: +2 повторения в двух последних подходах каждого упражнения
-  if (isAutoGenerated) {
-    exercises.forEach(ex => {
-      const totalSets = ex.sets.length;
-      ex.sets.forEach((set, idx) => {
-        if (idx >= totalSets - 2) {
-          set.target = addTwoReps(set.prev);
-          set.isPlus2 = true;
-        } else {
-          set.target = set.prev;
-          set.isPlus2 = false;
-        }
-      });
-    });
-  }
-
   const prevHeader = prevColIdx >= 0 ? String(values[dateRowIdx][prevColIdx] || "").replace(/\[.*?\]/g, "").trim() : "Прошлая";
-  const todayDateStr = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "GMT+3", "dd.MM");
+  const targetHeader = targetColIdx >= 0 ? String(values[dateRowIdx][targetColIdx] || "").replace(/\[.*?\]/g, "").trim() : "Сегодня";
 
   return {
     block: blockNum,
@@ -225,54 +142,20 @@ function parseWorkoutBlock(sheet, blockNum) {
     prevCol: prevColIdx + 1,
     targetCol: targetColIdx + 1,
     prevDate: prevHeader || "Прошлая",
-    targetDate: todayDateStr,
-    isAutoGenerated: isAutoGenerated,
+    targetDate: targetHeader || "Сегодня",
     exercises: exercises
   };
 }
 
-/**
- * Логика +2 повторений
- * 15x12 -> 15x14
- * 17,5х14 -> 17,5х16
- * Пустой х12 -> Пустой х14
- * 35хМАХ -> 35хМАХ (без изменений)
- */
-function addTwoReps(val) {
-  if (!val) return "";
-  val = String(val).trim();
-
-  // Регулярное выражение: (префикс/вес)(x|х)(\s*)(повторения)(суффикс)
-  const regex = /^(.*?[xхXХ]\s*)(\d+)(.*)$/;
-  const match = val.match(regex);
-  if (match) {
-    const prefix = match[1];
-    const reps = parseInt(match[2], 10);
-    const suffix = match[3];
-    return prefix + (reps + 2) + suffix;
-  }
-  return val;
-}
-
-/**
- * Запись выполненной тренировки в Google Таблицу
- */
 function saveWorkoutToSheet(sheet, payload) {
   let targetCol = parseInt(payload.targetCol || 0);
   const dateRow = parseInt(payload.dateRow || 10);
   const dateStr = payload.date || Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "GMT+3", "dd.MM");
   const results = payload.results || [];
 
-  if (targetCol <= 0) {
-    targetCol = sheet.getLastColumn() + 1;
-  }
+  if (targetCol <= 0) targetCol = sheet.getLastColumn() + 1;
+  if (targetCol > sheet.getMaxColumns()) sheet.insertColumnAfter(sheet.getMaxColumns());
 
-  // Если столбец выходит за границы листа, добавляем новый столбец
-  if (targetCol > sheet.getMaxColumns()) {
-    sheet.insertColumnAfter(sheet.getMaxColumns());
-  }
-
-  // Записываем заголовок в шапку с зеленой заливкой
   const headerCell = sheet.getRange(dateRow, targetCol);
   headerCell.setValue(dateStr + " [Готово]");
   headerCell.setBackground(CONFIG.HEADER_COLOR);
@@ -280,7 +163,6 @@ function saveWorkoutToSheet(sheet, payload) {
   headerCell.setFontWeight("bold");
   headerCell.setHorizontalAlignment("center");
 
-  // Записываем каждый выполненный подход
   let savedCount = 0;
   results.forEach(item => {
     if (item.row && item.value && item.completed) {
@@ -291,29 +173,15 @@ function saveWorkoutToSheet(sheet, payload) {
     }
   });
 
-  return {
-    savedSets: savedCount,
-    column: targetCol,
-    date: dateStr
-  };
+  return { savedSets: savedCount, column: targetCol, date: dateStr };
 }
 
-/**
- * Функция быстрой проверки в редакторе Apps Script (нажмите "Выполнить" для теста!)
- */
 function testWorkoutData() {
   const sheet = getWorkSheet();
   const dataB1 = parseWorkoutBlock(sheet, 1);
-  Logger.log("=== ТЕСТ БЛОК 1 ===");
-  Logger.log("Авто-прогрессия: " + dataB1.isAutoGenerated);
-  Logger.log("Всего упражнений: " + dataB1.exercises.length);
+  Logger.log("Блок 1 прочитан: " + dataB1.exercises.length + " упражнений.");
   if (dataB1.exercises.length > 0) {
-    Logger.log("Первое упражнение: " + dataB1.exercises[0].name);
+    Logger.log("Упражнение 1: " + dataB1.exercises[0].name);
     Logger.log("Подходы: " + JSON.stringify(dataB1.exercises[0].sets));
   }
-
-  const dataB2 = parseWorkoutBlock(sheet, 2);
-  Logger.log("=== ТЕСТ БЛОК 2 ===");
-  Logger.log("Авто-прогрессия: " + dataB2.isAutoGenerated);
-  Logger.log("Всего упражнений: " + dataB2.exercises.length);
 }
