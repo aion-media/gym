@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Gym Coach | Дневник тренировок</title>
+  
+  <!-- Шрифты и иконки -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main: #0d1117;
+      --bg-card: #161b22;
+      --bg-input: #21262d;
+      --border: #30363d;
+      --text-primary: #f0f6fc;
+      --text-secondary: #8b949e;
+      --accent-green: #2ea043;
+      --accent-green-bright: #3fb950;
+      --accent-blue: #58a6ff;
+      --accent-orange: #f0883e;
+      --accent-red: #f85149;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.45);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding-bottom: 110px; /* место под нижнюю панель */
+      user-select: none;
+    }
+
+    /* Верхняя панель (Header) */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(13, 17, 23, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px 12px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .logo-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1f6feb, #8957e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(31, 111, 235, 0.35);
+    }
+
+    .logo-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .logo-subtitle {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .settings-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .settings-btn:active {
+      transform: scale(0.92);
+      border-color: var(--text-primary);
+    }
+
+    /* Переключатель блоков (Tabs) */
+    .block-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: var(--bg-card);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .block-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 9px 0;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .block-btn.active {
+      background: #1f6feb;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(31, 111, 235, 0.4);
+    }
+
+    /* Инфо-панель: статус плана и дата */
+    .info-bar {
+      padding: 12px 18px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .workout-date {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .plan-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge-auto {
+      background: rgba(240, 136, 62, 0.15);
+      color: var(--accent-orange);
+      border: 1px solid rgba(240, 136, 62, 0.35);
+    }
+
+    .badge-trainer {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(88, 166, 255, 0.35);
+    }
+
+    /* Прогресс тренировки */
+    .progress-section {
+      padding: 0 18px 10px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-card);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1f6feb, var(--accent-green-bright));
+      width: 0%;
+      border-radius: 3px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Таймер отдыха (Мини плашка) */
+    .rest-timer-bar {
+      margin: 8px 18px 12px;
+      background: linear-gradient(135deg, #161b22, #1c2128);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .timer-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .timer-icon {
+      font-size: 20px;
+      color: var(--accent-blue);
+    }
+
+    .timer-value {
+      font-size: 18px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+    }
+
+    .timer-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .timer-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .timer-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .timer-btn:active {
+      background: #1f6feb;
+      border-color: #1f6feb;
+    }
+
+    .timer-btn.active {
+      background: #1f6feb;
+      border-color: #1f6feb;
+      color: #fff;
+    }
+
+    /* Список упражнений */
+    .exercise-list {
+      padding: 6px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Карточка упражнения (Аккордеон) */
+    .exercise-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .exercise-card.completed {
+      border-color: rgba(46, 160, 67, 0.45);
+    }
+
+    .exercise-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      background: var(--bg-card);
+      gap: 10px;
+    }
+
+    .exercise-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .exercise-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .exercise-card.completed .exercise-num {
+      background: rgba(46, 160, 67, 0.2);
+      color: var(--accent-green-bright);
+    }
+
+    .exercise-name {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-primary);
+    }
+
+    .exercise-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .exercise-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .exercise-card.completed .exercise-badge {
+      background: rgba(46, 160, 67, 0.2);
+      color: var(--accent-green-bright);
+    }
+
+    .accordion-arrow {
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: transform 0.25s ease;
+    }
+
+    .exercise-card.open .accordion-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* Содержимое аккордеона */
+    .exercise-content {
+      display: none;
+      padding: 0 16px 16px;
+      border-top: 1px solid rgba(48, 54, 61, 0.6);
+      background: rgba(13, 17, 23, 0.4);
+    }
+
+    .exercise-card.open .exercise-content {
+      display: block;
+    }
+
+    /* Шапка таблицы подходов */
+    .sets-header {
+      display: grid;
+      grid-template-columns: 38px 1fr 1fr 50px;
+      gap: 8px;
+      padding: 10px 0 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sets-header div:nth-child(2) {
+      text-align: center;
+    }
+
+    .sets-header div:nth-child(3) {
+      text-align: center;
+    }
+
+    .sets-header div:nth-child(4) {
+      text-align: right;
+    }
+
+    /* Строка подхода */
+    .set-row {
+      display: grid;
+      grid-template-columns: 38px 1fr 1fr 50px;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(48, 54, 61, 0.35);
+    }
+
+    .set-row:last-child {
+      border-bottom: none;
+    }
+
+    .set-number {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* Прошлый результат (Read only) */
+    .set-prev-box {
+      background: rgba(33, 38, 45, 0.7);
+      border: 1px solid rgba(48, 54, 61, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 9px 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #8b949e;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Поле ввода плана на сегодня */
+    .set-input-box {
+      position: relative;
+    }
+
+    .set-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 6px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .set-input:focus {
+      outline: none;
+      border-color: #58a6ff;
+      background: #28303b;
+      box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+    }
+
+    .set-row.completed .set-input {
+      border-color: rgba(46, 160, 67, 0.5);
+      color: #aff5b4;
+      background: rgba(46, 160, 67, 0.1);
+    }
+
+    .plus2-indicator {
+      position: absolute;
+      top: -6px;
+      right: -4px;
+      background: var(--accent-orange);
+      color: #000;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 4px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    /* Кнопка-галочка */
+    .set-check-btn {
+      width: 44px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      justify-self: end;
+    }
+
+    .set-check-btn:active {
+      transform: scale(0.9);
+    }
+
+    .set-row.completed .set-check-btn {
+      background: var(--accent-green);
+      border-color: var(--accent-green-bright);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(46, 160, 67, 0.4);
+    }
+
+    /* Нижняя плавающая панель завершения */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: rgba(13, 17, 23, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border);
+      padding: 12px 18px 20px;
+    }
+
+    .finish-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #238636, #2ea043);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(46, 160, 67, 0.35);
+      transition: all 0.2s;
+    }
+
+    .finish-btn:active {
+      transform: scale(0.98);
+      filter: brightness(1.1);
+    }
+
+    .finish-btn:disabled {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Модальные окна */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin-bottom: 20px;
+    }
+
+    .modal-input-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 18px;
+    }
+
+    .modal-input:focus {
+      outline: none;
+      border-color: #58a6ff;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #1f6feb;
+      border: none;
+      color: #fff;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Индикатор загрузки */
+    .loading-spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Уведомление Toast */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #238636;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      z-index: 200;
+      transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast -->
+  <div id="toast" class="toast">
+    <span>✔</span> <span id="toast-text">Сохранено</span>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="top-bar">
+      <div class="logo-box">
+        <div class="logo-icon">🏋️</div>
+        <div>
+          <div class="logo-title">GYM COACH</div>
+          <div class="logo-subtitle">Персональный план</div>
+        </div>
+      </div>
+      <button class="settings-btn" id="open-settings-btn" title="Настройки подключения">⚙️</button>
+    </div>
+
+    <!-- Переключатель Блока 1 и Блока 2 -->
+    <div class="block-selector">
+      <button class="block-btn active" id="tab-block-1" onclick="switchBlock(1)">
+        <span>🔥</span> Блок 1
+      </button>
+      <button class="block-btn" id="tab-block-2" onclick="switchBlock(2)">
+        <span>⚡</span> Блок 2
+      </button>
+    </div>
+  </header>
+
+  <!-- Инфо-панель -->
+  <div class="info-bar">
+    <div class="workout-date" id="workout-date-label">Тренировка: Сегодня</div>
+    <div class="plan-badge badge-auto" id="plan-badge">
+      <span>🚀</span> <span id="plan-badge-text">Прогрессия +2 повт.</span>
+    </div>
+  </div>
+
+  <!-- Прогресс выполнения -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <span>Выполнение подходов</span>
+      <span id="progress-text">0 / 0 (0%)</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Таймер отдыха между подходами -->
+  <div class="rest-timer-bar">
+    <div class="timer-display">
+      <div class="timer-icon">⏱️</div>
+      <div>
+        <div class="timer-value" id="timer-display">01:30</div>
+        <div class="timer-label">Таймер отдыха</div>
+      </div>
+    </div>
+    <div class="timer-buttons">
+      <button class="timer-btn" onclick="setTimer(60)">60с</button>
+      <button class="timer-btn active" onclick="setTimer(90)">90с</button>
+      <button class="timer-btn" onclick="setTimer(120)">120с</button>
+      <button class="timer-btn" id="timer-toggle-btn" onclick="toggleTimer()">▶</button>
+    </div>
+  </div>
+
+  <!-- Список упражнений (Аккордеоны) -->
+  <main class="exercise-list" id="exercise-list">
+    <!-- Упражнения будут динамически сгенерированы скриптом -->
+  </main>
+
+  <!-- Нижняя панель с кнопкой завершения -->
+  <div class="bottom-bar">
+    <button class="finish-btn" id="finish-btn" onclick="openFinishModal()">
+      <span>✔</span> Завершить тренировку (<span id="finish-count">0</span>)
+    </button>
+  </div>
+
+  <!-- Модальное окно завершения тренировки -->
+  <div class="modal-overlay" id="finish-modal">
+    <div class="modal-card">
+      <div class="modal-title">Завершить тренировку? 🎉</div>
+      <div class="modal-desc" id="finish-modal-desc">
+        Вы выполнили 0 из 0 подходов. Все результаты будут занесены в Google Таблицу тренера.
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeFinishModal()">Продолжить</button>
+        <button class="btn-primary" id="confirm-save-btn" onclick="saveWorkout()">
+          Сохранить в таблицу
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно настроек Google Таблицы -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-card">
+      <div class="modal-title">Настройки подключения ⚙️</div>
+      <div class="modal-desc">
+        Вставьте ссылку на ваш опубликованный <b>Google Apps Script</b> (Web App URL), чтобы данные синхронизировались с таблицей на Google Диске.
+      </div>
+      <label class="modal-input-label">URL веб-приложения Apps Script:</label>
+      <input type="url" class="modal-input" id="api-url-input" placeholder="https://script.google.com/macros/s/.../exec">
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeSettingsModal()">Закрыть</button>
+        <button class="btn-primary" onclick="saveSettings()">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Встроенные данные по умолчанию из таблицы New Gym (на случай отсутствия интернета или до подключения API) -->
+  <script>
+    const DEFAULT_DATA = {
+      block1: [
+        {
+          name: "Подьемы на носки с гантелей",
+          sets: [
+            { row: 12, prev: "15х12", target: "15х12" },
+            { row: 13, prev: "30х10", target: "30х10" }
+          ]
+        },
+        {
+          name: "Тяга верхнего блока: широкий прямой",
+          sets: [
+            { row: 17, prev: "25х14", target: "25х14" },
+            { row: 18, prev: "30х12", target: "30х12" },
+            { row: 19, prev: "40х10", target: "40х10" },
+            { row: 20, prev: "40х10", target: "40х10" }
+          ]
+        },
+        {
+          name: "Жим от груди в тренажере",
+          sets: [
+            { row: 21, prev: "5х12", target: "5х12" },
+            { row: 22, prev: "10х12", target: "10х12" },
+            { row: 23, prev: "15х12", target: "15х12" },
+            { row: 24, prev: "15х12", target: "15х12" }
+          ]
+        },
+        {
+          name: "Лицевая тяга (Face Pull)",
+          sets: [
+            { row: 27, prev: "5х12", target: "5х12" },
+            { row: 28, prev: "7х14", target: "7х14" },
+            { row: 29, prev: "7х14", target: "7х14" }
+          ]
+        },
+        {
+          name: "Протяжка",
+          sets: [
+            { row: 31, prev: "15х8", target: "15х8" },
+            { row: 32, prev: "20х10", target: "20х10" },
+            { row: 33, prev: "20х10(12)", target: "20х10(12)" }
+          ]
+        },
+        {
+          name: "Ягодичный мост в тренажере",
+          sets: [
+            { row: 35, prev: "10х12", target: "10х12" },
+            { row: 36, prev: "30х12", target: "30х12" },
+            { row: 37, prev: "40х8", target: "40х8" },
+            { row: 38, prev: "60х12", target: "60х12" },
+            { row: 39, prev: "60х12", target: "60х12" }
+          ]
+        },
+        {
+          name: "Сплит приседания",
+          sets: [
+            { row: 41, prev: "39х10", target: "39х10" },
+            { row: 42, prev: "52х10", target: "52х10" },
+            { row: 43, prev: "66х8", target: "66х8" },
+            { row: 44, prev: "60х8", target: "60х8" }
+          ]
+        },
+        {
+          name: "Сгибания ног в тренажере лежа",
+          sets: [
+            { row: 45, prev: "35х12", target: "35х12" },
+            { row: 46, prev: "50х10", target: "50х10" },
+            { row: 47, prev: "50х10", target: "50х10" }
+          ]
+        }
+      ],
+      block2: [
+        {
+          name: "Подьемы на носки с гантелей",
+          sets: [
+            { row: 55, prev: "15х12", target: "15х12" },
+            { row: 56, prev: "30х10", target: "30х10" }
+          ]
+        },
+        {
+          name: "Тяга нижнего блока: узкий",
+          sets: [
+            { row: 60, prev: "25х12", target: "25х12" },
+            { row: 61, prev: "32х12", target: "32х12" },
+            { row: 62, prev: "37х8", target: "37х8" },
+            { row: 63, prev: "37х12", target: "37х12" },
+            { row: 64, prev: "37х14", target: "37х14" }
+          ]
+        },
+        {
+          name: "Жим штанги лежа на наклонной скамье",
+          sets: [
+            { row: 65, prev: "20х10", target: "20х10" },
+            { row: 66, prev: "25х8", target: "25х8" },
+            { row: 67, prev: "25х12", target: "25х12" },
+            { row: 68, prev: "25х12", target: "25х12" }
+          ]
+        },
+        {
+          name: "У-Подъемы в кроссовере",
+          sets: [
+            { row: 70, prev: "5х12", target: "5х12" },
+            { row: 71, prev: "5х12", target: "5х12" },
+            { row: 72, prev: "5х8", target: "5х8" },
+            { row: 73, prev: "5х10", target: "5х10" }
+          ]
+        },
+        {
+          name: "Жим платформы ногами",
+          sets: [
+            { row: 77, prev: "70х12", target: "70х12" },
+            { row: 78, prev: "100х8", target: "100х8" },
+            { row: 79, prev: "150х8", target: "150х8" },
+            { row: 80, prev: "170х8", target: "170х8" },
+            { row: 81, prev: "175х10", target: "175х10" }
+          ]
+        },
+        {
+          name: "Гиперэкстензия",
+          sets: [
+            { row: 83, prev: "10х12", target: "10х12" },
+            { row: 84, prev: "25х10", target: "25х10" },
+            { row: 85, prev: "25х10", target: "25х10" }
+          ]
+        },
+        {
+          name: "Гоблет присед / Мертвая тяга",
+          sets: [
+            { row: 87, prev: "10х20", target: "10х20" },
+            { row: 88, prev: "30х12", target: "30х12" },
+            { row: 89, prev: "35х12", target: "35х12" },
+            { row: 90, prev: "40х10", target: "40х10" },
+            { row: 91, prev: "40х10", target: "40х10" }
+          ]
+        }
+      ]
+    };
+  </script>
+
+  <!-- Логика приложения -->
+  <script>
+    let currentBlock = 1;
+    let workoutData = null;
+    let isAutoGenerated = true;
+    let userSetsState = {}; // { 'ex_0_set_1': { completed: true, val: '15x14' } }
+
+    // Настройки
+    let scriptApiUrl = localStorage.getItem('gym_api_url') || '';
+
+    // Таймер
+    let timerDuration = 90;
+    let timerRemaining = 90;
+    let timerInterval = null;
+    let timerRunning = false;
+
+    // Звуковой синтезатор для звуков успеха и таймера (работает без внешних файлов)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq = 600, duration = 0.12, type = 'sine') {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playSuccessSound() {
+      playBeep(523.25, 0.08); // C5
+      setTimeout(() => playBeep(659.25, 0.12), 90); // E5
+    }
+
+    function playTimerAlarm() {
+      playBeep(880, 0.15);
+      setTimeout(() => playBeep(880, 0.15), 200);
+      setTimeout(() => playBeep(880, 0.3), 400);
+      if (navigator.vibrate) navigator.vibrate([150, 100, 150, 100, 300]);
+    }
+
+    // Инициализация
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('api-url-input').value = scriptApiUrl;
+      loadWorkoutForBlock(1);
+      updateDateLabel();
+    });
+
+    function updateDateLabel() {
+      const options = { weekday: 'short', day: 'numeric', month: 'short' };
+      const todayStr = new Date().toLocaleDateString('ru-RU', options);
+      document.getElementById('workout-date-label').textContent = `Тренировка: ${todayStr}`;
+    }
+
+    // Переключение блока
+    function switchBlock(blockNum) {
+      if (currentBlock === blockNum) return;
+      currentBlock = blockNum;
+
+      document.getElementById('tab-block-1').classList.toggle('active', blockNum === 1);
+      document.getElementById('tab-block-2').classList.toggle('active', blockNum === 2);
+
+      userSetsState = {};
+      loadWorkoutForBlock(blockNum);
+    }
+
+    // Загрузка данных тренировки (через API или из локальных дефолтов)
+    async function loadWorkoutForBlock(blockNum) {
+      const listEl = document.getElementById('exercise-list');
+      listEl.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+          <div class="loading-spinner" style="width: 28px; height: 28px; border-width: 3px; margin-bottom: 12px;"></div>
+          <div>Загрузка плана тренировки...</div>
+        </div>
+      `;
+
+      if (scriptApiUrl) {
+        try {
+          const res = await fetch(`${scriptApiUrl}?block=${blockNum}`);
+          const json = await res.json();
+          if (json.success && json.data) {
+            workoutData = json.data;
+            isAutoGenerated = json.data.isAutoGenerated;
+            renderExercises(workoutData.exercises);
+            updateBadge(isAutoGenerated);
+            return;
+          }
+        } catch (err) {
+          console.warn("Не удалось получить данные с сервера Apps Script, используем встроенные:", err);
+          showToast("Оффлайн-режим: используются локальные данные");
+        }
+      }
+
+      // Используем локальные встроенные данные
+      const rawBlock = blockNum === 1 ? DEFAULT_DATA.block1 : DEFAULT_DATA.block2;
+      workoutData = {
+        block: blockNum,
+        isAutoGenerated: true,
+        exercises: applyAutoProgression(JSON.parse(JSON.stringify(rawBlock)))
+      };
+      isAutoGenerated = true;
+      renderExercises(workoutData.exercises);
+      updateBadge(true);
+    }
+
+    // Применение правила +2 повторения в последних 2 подходах
+    function applyAutoProgression(exercises) {
+      return exercises.map(ex => {
+        const total = ex.sets.length;
+        ex.sets = ex.sets.map((set, idx) => {
+          const isPlus2 = (idx >= total - 2);
+          return {
+            ...set,
+            target: isPlus2 ? incrementReps(set.prev) : set.prev,
+            isPlus2: isPlus2
+          };
+        });
+        return ex;
+      });
+    }
+
+    // Регулярное выражение добавления +2 повторений
+    function incrementReps(val) {
+      if (!val) return "";
+      const regex = /^(.*?[xхXХ]\s*)(\d+)(.*)$/;
+      const match = String(val).match(regex);
+      if (match) {
+        const prefix = match[1];
+        const reps = parseInt(match[2], 10);
+        const suffix = match[3];
+        return `${prefix}${reps + 2}${suffix}`;
+      }
+      return val;
+    }
+
+    function updateBadge(auto) {
+      const badge = document.getElementById('plan-badge');
+      const badgeText = document.getElementById('plan-badge-text');
+      if (auto) {
+        badge.className = 'plan-badge badge-auto';
+        badgeText.textContent = 'Прогрессия +2 повт.';
+      } else {
+        badge.className = 'plan-badge badge-trainer';
+        badgeText.textContent = 'План тренера';
+      }
+    }
+
+    // Отрисовка упражнений в виде аккордеонов
+    function renderExercises(exercises) {
+      const container = document.getElementById('exercise-list');
+      container.innerHTML = '';
+
+      if (!exercises || exercises.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 40px;">Нет упражнений в этом блоке</div>`;
+        return;
+      }
+
+      exercises.forEach((ex, exIdx) => {
+        const card = document.createElement('div');
+        card.className = 'exercise-card open'; // по умолчанию открыты первые для удобства
+        card.id = `card-ex-${exIdx}`;
+
+        // Считаем выполненные подходы для этого упражнения
+        const totalSets = ex.sets.length;
+
+        let setsRowsHtml = '';
+        ex.sets.forEach((set, sIdx) => {
+          const setKey = `ex_${exIdx}_set_${sIdx}`;
+          const currentVal = userSetsState[setKey]?.val || set.target || set.prev;
+          const isDone = !!userSetsState[setKey]?.completed;
+
+          setsRowsHtml += `
+            <div class="set-row ${isDone ? 'completed' : ''}" id="row-${setKey}">
+              <div class="set-number">#${sIdx + 1}</div>
+              <div class="set-prev-box" title="Было на прошлой">${set.prev || '—'}</div>
+              <div class="set-input-box">
+                <input type="text" class="set-input" id="input-${setKey}" 
+                       value="${currentVal}" 
+                       oninput="onSetInputChange('${setKey}', this.value)"
+                       onfocus="this.select()">
+                ${set.isPlus2 ? '<div class="plus2-indicator">+2</div>' : ''}
+              </div>
+              <button class="set-check-btn" id="btn-${setKey}" onclick="toggleSet('${setKey}', ${exIdx}, ${sIdx})">
+                ✔
+              </button>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="exercise-header" onclick="toggleAccordion(${exIdx})">
+            <div class="exercise-title-group">
+              <div class="exercise-num">${exIdx + 1}</div>
+              <div class="exercise-name">${ex.name}</div>
+            </div>
+            <div class="exercise-meta">
+              <div class="exercise-badge" id="badge-ex-${exIdx}">0/${totalSets}</div>
+              <div class="accordion-arrow">▼</div>
+            </div>
+          </div>
+          <div class="exercise-content">
+            <div class="sets-header">
+              <div>Сет</div>
+              <div>Было</div>
+              <div>Сегодня</div>
+              <div>Факт</div>
+            </div>
+            ${setsRowsHtml}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateOverallProgress();
+    }
+
+    // Раскрытие/сворачивание аккордеона
+    function toggleAccordion(exIdx) {
+      const card = document.getElementById(`card-ex-${exIdx}`);
+      if (card) {
+        card.classList.toggle('open');
+      }
+    }
+
+    // Изменение значения в инпуте
+    function onSetInputChange(setKey, val) {
+      if (!userSetsState[setKey]) {
+        userSetsState[setKey] = { completed: false, val: val };
+      } else {
+        userSetsState[setKey].val = val;
+      }
+    }
+
+    // Клик по галочке выполнения подхода
+    function toggleSet(setKey, exIdx, sIdx) {
+      const inputEl = document.getElementById(`input-${setKey}`);
+      const rowEl = document.getElementById(`row-${setKey}`);
+
+      if (!userSetsState[setKey]) {
+        userSetsState[setKey] = { completed: true, val: inputEl.value };
+      } else {
+        userSetsState[setKey].completed = !userSetsState[setKey].completed;
+        userSetsState[setKey].val = inputEl.value;
+      }
+
+      const isCompleted = userSetsState[setKey].completed;
+      rowEl.classList.toggle('completed', isCompleted);
+
+      if (isCompleted) {
+        playSuccessSound();
+        if (navigator.vibrate) navigator.vibrate(35);
+        // Запуск таймера отдыха
+        startRestTimer();
+      }
+
+      updateExerciseBadge(exIdx);
+      updateOverallProgress();
+    }
+
+    // Обновление счетчика одного упражнения
+    function updateExerciseBadge(exIdx) {
+      const ex = workoutData.exercises[exIdx];
+      let completedCount = 0;
+      ex.sets.forEach((_, sIdx) => {
+        if (userSetsState[`ex_${exIdx}_set_${sIdx}`]?.completed) {
+          completedCount++;
+        }
+      });
+
+      const badge = document.getElementById(`badge-ex-${exIdx}`);
+      const card = document.getElementById(`card-ex-${exIdx}`);
+      badge.textContent = `${completedCount}/${ex.sets.length}`;
+
+      if (completedCount === ex.sets.length) {
+        card.classList.add('completed');
+      } else {
+        card.classList.remove('completed');
+      }
+    }
+
+    // Общий прогресс тренировки
+    function updateOverallProgress() {
+      if (!workoutData || !workoutData.exercises) return;
+
+      let totalSets = 0;
+      let completedSets = 0;
+
+      workoutData.exercises.forEach((ex, exIdx) => {
+        totalSets += ex.sets.length;
+        ex.sets.forEach((_, sIdx) => {
+          if (userSetsState[`ex_${exIdx}_set_${sIdx}`]?.completed) {
+            completedSets++;
+          }
+        });
+      });
+
+      const percent = totalSets > 0 ? Math.round((completedSets / totalSets) * 100) : 0;
+      document.getElementById('progress-text').textContent = `${completedSets} / ${totalSets} (${percent}%)`;
+      document.getElementById('progress-fill').style.width = `${percent}%`;
+      document.getElementById('finish-count').textContent = `${completedSets}/${totalSets}`;
+
+      const finishBtn = document.getElementById('finish-btn');
+      finishBtn.disabled = (completedSets === 0);
+    }
+
+    // Таймер отдыха
+    function setTimer(seconds) {
+      document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      timerDuration = seconds;
+      timerRemaining = seconds;
+      updateTimerDisplay();
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timer-toggle-btn').textContent = '▶';
+      }
+    }
+
+    function toggleTimer() {
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timer-toggle-btn').textContent = '▶';
+      } else {
+        startRestTimer();
+      }
+    }
+
+    function startRestTimer() {
+      clearInterval(timerInterval);
+      timerRemaining = timerDuration;
+      timerRunning = true;
+      document.getElementById('timer-toggle-btn').textContent = '⏸';
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        timerRemaining--;
+        updateTimerDisplay();
+        if (timerRemaining <= 0) {
+          clearInterval(timerInterval);
+          timerRunning = false;
+          document.getElementById('timer-toggle-btn').textContent = '▶';
+          playTimerAlarm();
+          showToast("Время отдыха вышло! Пора жать 💪");
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerRemaining / 60);
+      const secs = timerRemaining % 60;
+      document.getElementById('timer-display').textContent = 
+        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    // Завершение тренировки (Модалка)
+    function openFinishModal() {
+      let totalSets = 0;
+      let completedSets = 0;
+
+      workoutData.exercises.forEach((ex, exIdx) => {
+        totalSets += ex.sets.length;
+        ex.sets.forEach((_, sIdx) => {
+          if (userSetsState[`ex_${exIdx}_set_${sIdx}`]?.completed) completedSets++;
+        });
+      });
+
+      document.getElementById('finish-modal-desc').innerHTML = `
+        Вы выполнили <b>${completedSets} из ${totalSets}</b> подходов.<br>
+        Данные будут аккуратно сохранены в вашу Google Таблицу в новый столбец с текущей датой.
+      `;
+      document.getElementById('finish-modal').classList.add('active');
+    }
+
+    function closeFinishModal() {
+      document.getElementById('finish-modal').classList.remove('active');
+    }
+
+    // Отправка в Google Таблицу
+    async function saveWorkout() {
+      const confirmBtn = document.getElementById('confirm-save-btn');
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = `<span class="loading-spinner"></span> Сохранение...`;
+
+      // Формируем массив результатов
+      const results = [];
+      workoutData.exercises.forEach((ex, exIdx) => {
+        ex.sets.forEach((set, sIdx) => {
+          const state = userSetsState[`ex_${exIdx}_set_${sIdx}`];
+          if (state && state.completed) {
+            results.push({
+              row: set.row,
+              value: state.val || set.target || set.prev,
+              completed: true
+            });
+          }
+        });
+      });
+
+      const todayStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+      const payload = {
+        block: currentBlock,
+        date: todayStr,
+        targetCol: workoutData.targetCol || 0,
+        dateRow: workoutData.dateRow || (currentBlock === 1 ? 10 : 53),
+        results: results
+      };
+
+      if (scriptApiUrl) {
+        try {
+          const response = await fetch(scriptApiUrl, {
+            method: 'POST',
+            mode: 'no-cors', // Apps Script web app standard redirect handling
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          closeFinishModal();
+          showToast("🎉 Тренировка успешно сохранена в Google Таблицу!");
+          playSuccessSound();
+          return;
+        } catch (err) {
+          console.error("Ошибка сохранения в Google Таблицу:", err);
+          alert("Не удалось отправить данные в Google Таблицу. Проверьте интернет или настройки Apps Script URL.");
+        } finally {
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = 'Сохранить в таблицу';
+        }
+      } else {
+        // Демо-режим без API
+        setTimeout(() => {
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = 'Сохранить в таблицу';
+          closeFinishModal();
+          showToast("🎉 Тренировка завершена! (Демо-сохранение)");
+          playSuccessSound();
+        }, 600);
+      }
+    }
+
+    // Модалка настроек
+    document.getElementById('open-settings-btn').addEventListener('click', () => {
+      document.getElementById('settings-modal').classList.add('active');
+    });
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.remove('active');
+    }
+
+    function saveSettings() {
+      const url = document.getElementById('api-url-input').value.trim();
+      scriptApiUrl = url;
+      localStorage.setItem('gym_api_url', url);
+      closeSettingsModal();
+      showToast("Настройки подключения сохранены");
+      loadWorkoutForBlock(currentBlock);
+    }
+
+    // Toast
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+  </script>
+</body>
+</html>
