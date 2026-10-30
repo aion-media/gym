@@ -832,142 +832,381 @@
   <!-- Встроенные данные по умолчанию из таблицы New Gym (на случай отсутствия интернета или до подключения API) -->
   <script>
     const DEFAULT_DATA = {
-      block1: [
-        {
-          name: "Подьемы на носки с гантелей",
-          sets: [
-            { row: 12, prev: "15х12", target: "15х12" },
-            { row: 13, prev: "30х10", target: "30х10" }
-          ]
-        },
-        {
-          name: "Тяга верхнего блока: широкий прямой",
-          sets: [
-            { row: 17, prev: "25х14", target: "25х14" },
-            { row: 18, prev: "30х12", target: "30х12" },
-            { row: 19, prev: "40х10", target: "40х10" },
-            { row: 20, prev: "40х10", target: "40х10" }
-          ]
-        },
-        {
-          name: "Жим от груди в тренажере",
-          sets: [
-            { row: 21, prev: "5х12", target: "5х12" },
-            { row: 22, prev: "10х12", target: "10х12" },
-            { row: 23, prev: "15х12", target: "15х12" },
-            { row: 24, prev: "15х12", target: "15х12" }
-          ]
-        },
-        {
-          name: "Лицевая тяга (Face Pull)",
-          sets: [
-            { row: 27, prev: "5х12", target: "5х12" },
-            { row: 28, prev: "7х14", target: "7х14" },
-            { row: 29, prev: "7х14", target: "7х14" }
-          ]
-        },
-        {
-          name: "Протяжка",
-          sets: [
-            { row: 31, prev: "15х8", target: "15х8" },
-            { row: 32, prev: "20х10", target: "20х10" },
-            { row: 33, prev: "20х10(12)", target: "20х10(12)" }
-          ]
-        },
-        {
-          name: "Ягодичный мост в тренажере",
-          sets: [
-            { row: 35, prev: "10х12", target: "10х12" },
-            { row: 36, prev: "30х12", target: "30х12" },
-            { row: 37, prev: "40х8", target: "40х8" },
-            { row: 38, prev: "60х12", target: "60х12" },
-            { row: 39, prev: "60х12", target: "60х12" }
-          ]
-        },
-        {
-          name: "Сплит приседания",
-          sets: [
-            { row: 41, prev: "39х10", target: "39х10" },
-            { row: 42, prev: "52х10", target: "52х10" },
-            { row: 43, prev: "66х8", target: "66х8" },
-            { row: 44, prev: "60х8", target: "60х8" }
-          ]
-        },
-        {
-          name: "Сгибания ног в тренажере лежа",
-          sets: [
-            { row: 45, prev: "35х12", target: "35х12" },
-            { row: 46, prev: "50х10", target: "50х10" },
-            { row: 47, prev: "50х10", target: "50х10" }
-          ]
-        }
+      "block1": [
+            {
+                  "name": "Подьемы на носки с гантелей",
+                  "sets": [
+                        {
+                              "row": 4,
+                              "prev": "15х12",
+                              "target": "15х12"
+                        },
+                        {
+                              "row": 5,
+                              "prev": "30х10",
+                              "target": "30х10"
+                        }
+                  ]
+            },
+            {
+                  "name": "Тяга верхнего блока: широкий прямой",
+                  "sets": [
+                        {
+                              "row": 8,
+                              "prev": "25х14",
+                              "target": "25х14"
+                        },
+                        {
+                              "row": 9,
+                              "prev": "30х12",
+                              "target": "30х12"
+                        },
+                        {
+                              "row": 10,
+                              "prev": "40х10",
+                              "target": "40х10"
+                        },
+                        {
+                              "row": 11,
+                              "prev": "40х8",
+                              "target": "40х10"
+                        }
+                  ]
+            },
+            {
+                  "name": "Жим от груди в тренажере",
+                  "sets": [
+                        {
+                              "row": 12,
+                              "prev": "5х12",
+                              "target": "5х12"
+                        },
+                        {
+                              "row": 13,
+                              "prev": "10х12",
+                              "target": "10х12"
+                        },
+                        {
+                              "row": 14,
+                              "prev": "15х12",
+                              "target": "15х12"
+                        },
+                        {
+                              "row": 15,
+                              "prev": "15х12",
+                              "target": "15х12"
+                        }
+                  ]
+            },
+            {
+                  "name": "Лицевая тяга (Face Pull)",
+                  "sets": [
+                        {
+                              "row": 18,
+                              "prev": "5х12",
+                              "target": "5х12"
+                        },
+                        {
+                              "row": 19,
+                              "prev": "7х14",
+                              "target": "7х14"
+                        },
+                        {
+                              "row": 20,
+                              "prev": "7х14",
+                              "target": "7х14"
+                        }
+                  ]
+            },
+            {
+                  "name": "Протяжка",
+                  "sets": [
+                        {
+                              "row": 22,
+                              "prev": "15х8",
+                              "target": "15х8"
+                        },
+                        {
+                              "row": 23,
+                              "prev": "17,5х12",
+                              "target": "20х10"
+                        },
+                        {
+                              "row": 24,
+                              "prev": "17,5х14",
+                              "target": "20х10(12)"
+                        }
+                  ]
+            },
+            {
+                  "name": "Ягодичный мост в тренажере",
+                  "sets": [
+                        {
+                              "row": 26,
+                              "prev": "10х12",
+                              "target": "10х12"
+                        },
+                        {
+                              "row": 27,
+                              "prev": "30х12",
+                              "target": "30х12"
+                        },
+                        {
+                              "row": 28,
+                              "prev": "40х8",
+                              "target": "40х8"
+                        },
+                        {
+                              "row": 29,
+                              "prev": "55х8",
+                              "target": "60х12"
+                        },
+                        {
+                              "row": 30,
+                              "prev": "55х10",
+                              "target": "60х12"
+                        }
+                  ]
+            },
+            {
+                  "name": "Сплит приседания",
+                  "sets": [
+                        {
+                              "row": 32,
+                              "prev": "39х12",
+                              "target": "39х10"
+                        },
+                        {
+                              "row": 33,
+                              "prev": "52х8",
+                              "target": "52х10"
+                        },
+                        {
+                              "row": 34,
+                              "prev": "60х8",
+                              "target": "66х8"
+                        },
+                        {
+                              "row": 35,
+                              "prev": "60х8",
+                              "target": "60х8"
+                        }
+                  ]
+            },
+            {
+                  "name": "Сгибания ног в тренажере лежа",
+                  "sets": [
+                        {
+                              "row": 36,
+                              "prev": "35х12",
+                              "target": "35х12"
+                        },
+                        {
+                              "row": 37,
+                              "prev": "50х10",
+                              "target": "50х10"
+                        },
+                        {
+                              "row": 38,
+                              "prev": "50х10",
+                              "target": "50х10"
+                        }
+                  ]
+            }
       ],
-      block2: [
-        {
-          name: "Подьемы на носки с гантелей",
-          sets: [
-            { row: 55, prev: "15х12", target: "15х12" },
-            { row: 56, prev: "30х10", target: "30х10" }
-          ]
-        },
-        {
-          name: "Тяга нижнего блока: узкий",
-          sets: [
-            { row: 60, prev: "25х12", target: "25х12" },
-            { row: 61, prev: "32х12", target: "32х12" },
-            { row: 62, prev: "37х8", target: "37х8" },
-            { row: 63, prev: "37х12", target: "37х12" },
-            { row: 64, prev: "37х14", target: "37х14" }
-          ]
-        },
-        {
-          name: "Жим штанги лежа на наклонной скамье",
-          sets: [
-            { row: 65, prev: "20х10", target: "20х10" },
-            { row: 66, prev: "25х8", target: "25х8" },
-            { row: 67, prev: "25х12", target: "25х12" },
-            { row: 68, prev: "25х12", target: "25х12" }
-          ]
-        },
-        {
-          name: "У-Подъемы в кроссовере",
-          sets: [
-            { row: 70, prev: "5х12", target: "5х12" },
-            { row: 71, prev: "5х12", target: "5х12" },
-            { row: 72, prev: "5х8", target: "5х8" },
-            { row: 73, prev: "5х10", target: "5х10" }
-          ]
-        },
-        {
-          name: "Жим платформы ногами",
-          sets: [
-            { row: 77, prev: "70х12", target: "70х12" },
-            { row: 78, prev: "100х8", target: "100х8" },
-            { row: 79, prev: "150х8", target: "150х8" },
-            { row: 80, prev: "170х8", target: "170х8" },
-            { row: 81, prev: "175х10", target: "175х10" }
-          ]
-        },
-        {
-          name: "Гиперэкстензия",
-          sets: [
-            { row: 83, prev: "10х12", target: "10х12" },
-            { row: 84, prev: "25х10", target: "25х10" },
-            { row: 85, prev: "25х10", target: "25х10" }
-          ]
-        },
-        {
-          name: "Гоблет присед / Мертвая тяга",
-          sets: [
-            { row: 87, prev: "10х20", target: "10х20" },
-            { row: 88, prev: "30х12", target: "30х12" },
-            { row: 89, prev: "35х12", target: "35х12" },
-            { row: 90, prev: "40х10", target: "40х10" },
-            { row: 91, prev: "40х10", target: "40х10" }
-          ]
-        }
+      "block2": [
+            {
+                  "name": "Подьемы на носки с гантелей",
+                  "sets": [
+                        {
+                              "row": 46,
+                              "prev": "15х12",
+                              "target": "15х12"
+                        },
+                        {
+                              "row": 47,
+                              "prev": "30х10",
+                              "target": "30х10"
+                        }
+                  ]
+            },
+            {
+                  "name": "Тяга нижнего блока:  узкий",
+                  "sets": [
+                        {
+                              "row": 50,
+                              "prev": "25х12",
+                              "target": "25х12"
+                        },
+                        {
+                              "row": 51,
+                              "prev": "32х11",
+                              "target": "32х12"
+                        },
+                        {
+                              "row": 52,
+                              "prev": "37х8",
+                              "target": "37х8"
+                        },
+                        {
+                              "row": 53,
+                              "prev": "37х12",
+                              "target": "37х12"
+                        },
+                        {
+                              "row": 54,
+                              "prev": "37х12",
+                              "target": "37х14"
+                        }
+                  ]
+            },
+            {
+                  "name": "Жим штагни лежа на наклонной скамье",
+                  "sets": [
+                        {
+                              "row": 55,
+                              "prev": "20х10",
+                              "target": "20x10"
+                        },
+                        {
+                              "row": 56,
+                              "prev": "25х10",
+                              "target": "25x8"
+                        },
+                        {
+                              "row": 57,
+                              "prev": "25х10",
+                              "target": "25x12"
+                        },
+                        {
+                              "row": 58,
+                              "prev": "25х10",
+                              "target": "25x12"
+                        },
+                        {
+                              "row": 60,
+                              "prev": "5х10",
+                              "target": "5х12"
+                        },
+                        {
+                              "row": 61,
+                              "prev": "5х12",
+                              "target": "5х12"
+                        }
+                  ]
+            },
+            {
+                  "name": "У-Подъемы в кроссовере",
+                  "sets": [
+                        {
+                              "row": 62,
+                              "prev": "5х8",
+                              "target": "5х8"
+                        },
+                        {
+                              "row": 63,
+                              "prev": "5х8",
+                              "target": "5х10"
+                        },
+                        {
+                              "row": 64,
+                              "prev": "5х7 :(",
+                              "target": "5х10"
+                        },
+                        {
+                              "row": 65,
+                              "prev": "В кроссовере",
+                              "target": "В кроссовере"
+                        }
+                  ]
+            },
+            {
+                  "name": "Жим платформы ногами",
+                  "sets": [
+                        {
+                              "row": 67,
+                              "prev": "70х12",
+                              "target": "3"
+                        },
+                        {
+                              "row": 68,
+                              "prev": "100x8",
+                              "target": "100х8"
+                        },
+                        {
+                              "row": 69,
+                              "prev": "150х8",
+                              "target": "150х8"
+                        },
+                        {
+                              "row": 70,
+                              "prev": "175х10",
+                              "target": "170х8"
+                        },
+                        {
+                              "row": 71,
+                              "prev": "170х12",
+                              "target": "175х10"
+                        },
+                        {
+                              "row": 72,
+                              "prev": "175х10",
+                              "target": "175х10"
+                        }
+                  ]
+            },
+            {
+                  "name": "Гиперэкстензия",
+                  "sets": [
+                        {
+                              "row": 73,
+                              "prev": "10х12",
+                              "target": "2"
+                        },
+                        {
+                              "row": 74,
+                              "prev": "25х10",
+                              "target": "25х10"
+                        },
+                        {
+                              "row": 75,
+                              "prev": "25х10",
+                              "target": "25х10"
+                        }
+                  ]
+            },
+            {
+                  "name": "Гоблет пррисед (гантель перед собой)",
+                  "sets": [
+                        {
+                              "row": 77,
+                              "prev": "Мертвая тяга",
+                              "target": "1"
+                        },
+                        {
+                              "row": 78,
+                              "prev": "10х25",
+                              "target": "30х12"
+                        },
+                        {
+                              "row": 79,
+                              "prev": "35х12",
+                              "target": "35х12"
+                        },
+                        {
+                              "row": 80,
+                              "prev": "40х10",
+                              "target": "40х10"
+                        },
+                        {
+                              "row": 81,
+                              "prev": "40х10",
+                              "target": "40х10"
+                        }
+                  ]
+            }
       ]
-    };
+};
   </script>
 
   <!-- Логика приложения -->
@@ -1068,50 +1307,13 @@
         }
       }
 
-      // Используем локальные встроенные данные
+      // Используем точные данные двух последних столбцов таблицы
       const rawBlock = blockNum === 1 ? DEFAULT_DATA.block1 : DEFAULT_DATA.block2;
       workoutData = {
         block: blockNum,
-        isAutoGenerated: true,
-        exercises: applyAutoProgression(JSON.parse(JSON.stringify(rawBlock)))
+        exercises: JSON.parse(JSON.stringify(rawBlock))
       };
-      isAutoGenerated = true;
       renderExercises(workoutData.exercises);
-      updateBadge(true);
-    }
-
-    // Применение правила +2 повторения в последних 2 подходах
-    function applyAutoProgression(exercises) {
-      return exercises.map(ex => {
-        const total = ex.sets.length;
-        ex.sets = ex.sets.map((set, idx) => {
-          const isPlus2 = (idx >= total - 2);
-          return {
-            ...set,
-            target: isPlus2 ? incrementReps(set.prev) : set.prev,
-            isPlus2: isPlus2
-          };
-        });
-        return ex;
-      });
-    }
-
-    // Регулярное выражение добавления +2 повторений
-    function incrementReps(val) {
-      if (!val) return "";
-      const regex = /^(.*?[xхXХ]\s*)(\d+)(.*)$/;
-      const match = String(val).match(regex);
-      if (match) {
-        const prefix = match[1];
-        const reps = parseInt(match[2], 10);
-        const suffix = match[3];
-        return `${prefix}${reps + 2}${suffix}`;
-      }
-      return val;
-    }
-
-    function updateBadge(auto) {
-      // Бейдж скрыт по просьбе пользователя
     }
 
     // Отрисовка упражнений в виде аккордеонов (изначально свернуты)
