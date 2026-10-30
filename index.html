@@ -217,17 +217,17 @@
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Таймер отдыха (Мини плашка) */
+    /* Таймер отдыха (Зеленая стилизация) */
     .rest-timer-bar {
       margin: 8px 18px 12px;
-      background: linear-gradient(135deg, #161b22, #1c2128);
-      border: 1px solid var(--border);
+      background: linear-gradient(135deg, #101913, #152219);
+      border: 1px solid rgba(63, 185, 80, 0.45);
       border-radius: var(--radius-md);
       padding: 10px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 4px 16px rgba(46, 160, 67, 0.18);
     }
 
     .timer-display {
@@ -238,7 +238,7 @@
 
     .timer-icon {
       font-size: 20px;
-      color: var(--accent-blue);
+      color: var(--accent-green-bright);
     }
 
     .timer-value {
@@ -250,7 +250,7 @@
 
     .timer-label {
       font-size: 11px;
-      color: var(--text-secondary);
+      color: #8b949e;
       font-weight: 500;
     }
 
@@ -260,26 +260,40 @@
     }
 
     .timer-btn {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      padding: 5px 9px;
+      background: rgba(46, 160, 67, 0.15);
+      border: 1px solid rgba(46, 160, 67, 0.4);
+      color: #7ee787;
+      padding: 6px 10px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: var(--radius-sm);
       cursor: pointer;
       transition: all 0.15s;
     }
 
     .timer-btn:active {
-      background: #1f6feb;
-      border-color: #1f6feb;
+      transform: scale(0.95);
     }
 
     .timer-btn.active {
-      background: #1f6feb;
-      border-color: #1f6feb;
+      background: var(--accent-green);
+      border-color: var(--accent-green-bright);
       color: #fff;
+      box-shadow: 0 2px 8px rgba(46, 160, 67, 0.4);
+    }
+
+    #timer-toggle-btn {
+      background: var(--accent-green);
+      border-color: var(--accent-green-bright);
+      color: #fff;
+      min-width: 38px;
+    }
+
+    #timer-toggle-btn.running {
+      background: var(--accent-orange);
+      border-color: #ffa657;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(240, 136, 62, 0.4);
     }
 
     /* Список упражнений */
@@ -719,10 +733,9 @@
   <header class="header">
     <div class="top-bar">
       <div class="logo-box">
-        <div class="logo-icon">🏋️</div>
         <div>
-          <div class="logo-title">GYM COACH</div>
-          <div class="logo-subtitle">Персональный план</div>
+          <div class="logo-title">Gym E-Coach by litt1e_roo</div>
+          <div class="logo-subtitle">Персональный план: Екатерина Б.</div>
         </div>
       </div>
       <button class="settings-btn" id="open-settings-btn" title="Настройки подключения">⚙️</button>
@@ -742,9 +755,6 @@
   <!-- Инфо-панель -->
   <div class="info-bar">
     <div class="workout-date" id="workout-date-label">Тренировка: Сегодня</div>
-    <div class="plan-badge badge-auto" id="plan-badge">
-      <span>🚀</span> <span id="plan-badge-text">Прогрессия +2 повт.</span>
-    </div>
   </div>
 
   <!-- Прогресс выполнения -->
@@ -1101,18 +1111,10 @@
     }
 
     function updateBadge(auto) {
-      const badge = document.getElementById('plan-badge');
-      const badgeText = document.getElementById('plan-badge-text');
-      if (auto) {
-        badge.className = 'plan-badge badge-auto';
-        badgeText.textContent = 'Прогрессия +2 повт.';
-      } else {
-        badge.className = 'plan-badge badge-trainer';
-        badgeText.textContent = 'План тренера';
-      }
+      // Бейдж скрыт по просьбе пользователя
     }
 
-    // Отрисовка упражнений в виде аккордеонов
+    // Отрисовка упражнений в виде аккордеонов (изначально свернуты)
     function renderExercises(exercises) {
       const container = document.getElementById('exercise-list');
       container.innerHTML = '';
@@ -1124,7 +1126,7 @@
 
       exercises.forEach((ex, exIdx) => {
         const card = document.createElement('div');
-        card.className = 'exercise-card open'; // по умолчанию открыты первые для удобства
+        card.className = 'exercise-card'; // Изначально свёрнуты!
         card.id = `card-ex-${exIdx}`;
 
         // Считаем выполненные подходы для этого упражнения
@@ -1145,7 +1147,6 @@
                        value="${currentVal}" 
                        oninput="onSetInputChange('${setKey}', this.value)"
                        onfocus="this.select()">
-                ${set.isPlus2 ? '<div class="plus2-indicator">+2</div>' : ''}
               </div>
               <button class="set-check-btn" id="btn-${setKey}" onclick="toggleSet('${setKey}', ${exIdx}, ${sIdx})">
                 ✔
@@ -1281,7 +1282,9 @@
       if (timerRunning) {
         clearInterval(timerInterval);
         timerRunning = false;
-        document.getElementById('timer-toggle-btn').textContent = '▶';
+        const btn = document.getElementById('timer-toggle-btn');
+        btn.classList.remove('running');
+        btn.textContent = '▶';
       }
     }
 
@@ -1289,7 +1292,9 @@
       if (timerRunning) {
         clearInterval(timerInterval);
         timerRunning = false;
-        document.getElementById('timer-toggle-btn').textContent = '▶';
+        const btn = document.getElementById('timer-toggle-btn');
+        btn.classList.remove('running');
+        btn.textContent = '▶';
       } else {
         startRestTimer();
       }
@@ -1299,7 +1304,9 @@
       clearInterval(timerInterval);
       timerRemaining = timerDuration;
       timerRunning = true;
-      document.getElementById('timer-toggle-btn').textContent = '⏸';
+      const btn = document.getElementById('timer-toggle-btn');
+      btn.classList.add('running');
+      btn.textContent = '⏸';
       updateTimerDisplay();
 
       timerInterval = setInterval(() => {
@@ -1308,7 +1315,8 @@
         if (timerRemaining <= 0) {
           clearInterval(timerInterval);
           timerRunning = false;
-          document.getElementById('timer-toggle-btn').textContent = '▶';
+          btn.classList.remove('running');
+          btn.textContent = '▶';
           playTimerAlarm();
           showToast("Время отдыха вышло! Пора жать 💪");
         }
