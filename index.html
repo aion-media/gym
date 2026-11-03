@@ -165,26 +165,31 @@
       font-weight: 600;
     }
 
-    .plan-badge {
-      font-size: 11px;
+    .date-badge {
+      font-size: 12px;
       font-weight: 700;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 20px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
 
-    .badge-auto {
-      background: rgba(240, 136, 62, 0.15);
-      color: var(--accent-orange);
-      border: 1px solid rgba(240, 136, 62, 0.35);
+    .prev-date-badge {
+      background: rgba(139, 148, 158, 0.15);
+      color: #8b949e;
+      border: 1px solid rgba(139, 148, 158, 0.35);
     }
 
-    .badge-trainer {
-      background: rgba(88, 166, 255, 0.15);
-      color: var(--accent-blue);
-      border: 1px solid rgba(88, 166, 255, 0.35);
+    .today-date-badge {
+      background: rgba(46, 160, 67, 0.15);
+      color: #3fb950;
+      border: 1px solid rgba(46, 160, 67, 0.4);
+    }
+
+    .badge-lbl {
+      color: var(--text-secondary);
+      font-weight: 500;
     }
 
     /* Прогресс тренировки */
@@ -752,9 +757,14 @@
     </div>
   </header>
 
-  <!-- Инфо-панель -->
+  <!-- Инфо-панель: Прошлая и Сегодняшняя даты -->
   <div class="info-bar">
-    <div class="workout-date" id="workout-date-label">Тренировка: Сегодня</div>
+    <div class="date-badge prev-date-badge" id="prev-date-badge" title="Дата прошлой тренировки">
+      <span class="badge-lbl">Было:</span> <span id="prev-date-val">...</span>
+    </div>
+    <div class="date-badge today-date-badge" id="today-date-badge" title="Дата сегодняшней тренировки">
+      <span class="badge-lbl">Сегодня:</span> <span id="today-date-val">...</span>
+    </div>
   </div>
 
   <!-- Прогресс выполнения -->
@@ -849,63 +859,78 @@
                   ]
             },
             {
-                  "name": "Тяга верхнего блока: широкий прямой",
+                  "name": "Тяга верхнего блока:  широкий прямой",
                   "sets": [
                         {
-                              "row": 8,
+                              "row": 7,
                               "prev": "25х14",
                               "target": "25х14"
                         },
                         {
-                              "row": 9,
+                              "row": 8,
                               "prev": "30х12",
                               "target": "30х12"
+                        },
+                        {
+                              "row": 9,
+                              "prev": "40х10",
+                              "target": "40х10"
                         },
                         {
                               "row": 10,
                               "prev": "40х10",
                               "target": "40х10"
-                        },
-                        {
-                              "row": 11,
-                              "prev": "40х8",
-                              "target": "40х10"
                         }
                   ]
             },
             {
-                  "name": "Жим от груди в тренажере",
+                  "name": "Бабочка",
                   "sets": [
                         {
+                              "row": 11,
+                              "prev": "10х14",
+                              "target": "10х14"
+                        },
+                        {
                               "row": 12,
-                              "prev": "5х12",
-                              "target": "5х12"
+                              "prev": "15х12",
+                              "target": "15х12"
                         },
                         {
                               "row": 13,
-                              "prev": "10х12",
-                              "target": "10х12"
+                              "prev": "20х10",
+                              "target": "20х10"
                         },
                         {
                               "row": 14,
-                              "prev": "15х12",
-                              "target": "15х12"
+                              "prev": "30х10",
+                              "target": "30х10"
+                        }
+                  ]
+            },
+            {
+                  "name": "Ротация плеча 90 с гантелей",
+                  "sets": [
+                        {
+                              "row": 16,
+                              "prev": "2,5х10",
+                              "target": "2,5х10"
                         },
                         {
-                              "row": 15,
-                              "prev": "15х12",
-                              "target": "15х12"
+                              "row": 17,
+                              "prev": "2,5х10",
+                              "target": "2,5х10"
+                        },
+                        {
+                              "row": 18,
+                              "prev": "2,5х10",
+                              "target": "2,5х10"
                         }
                   ]
             },
             {
                   "name": "Лицевая тяга (Face Pull)",
                   "sets": [
-                        {
-                              "row": 18,
-                              "prev": "5х12",
-                              "target": "5х12"
-                        },
                         {
                               "row": 19,
                               "prev": "7х14",
@@ -923,18 +948,13 @@
                   "sets": [
                         {
                               "row": 22,
-                              "prev": "15х8",
-                              "target": "15х8"
-                        },
-                        {
-                              "row": 23,
-                              "prev": "17,5х12",
+                              "prev": "20х10",
                               "target": "20х10"
                         },
                         {
-                              "row": 24,
-                              "prev": "17,5х14",
-                              "target": "20х10(12)"
+                              "row": 23,
+                              "prev": "20х10",
+                              "target": "20х10"
                         }
                   ]
             },
@@ -943,73 +963,43 @@
                   "sets": [
                         {
                               "row": 26,
-                              "prev": "10х12",
-                              "target": "10х12"
-                        },
-                        {
-                              "row": 27,
                               "prev": "30х12",
                               "target": "30х12"
                         },
                         {
-                              "row": 28,
+                              "row": 27,
                               "prev": "40х8",
                               "target": "40х8"
                         },
                         {
-                              "row": 29,
-                              "prev": "55х8",
+                              "row": 28,
+                              "prev": "60х12",
                               "target": "60х12"
                         },
                         {
-                              "row": 30,
-                              "prev": "55х10",
+                              "row": 29,
+                              "prev": "60х12",
                               "target": "60х12"
                         }
                   ]
             },
             {
-                  "name": "Сплит приседания",
+                  "name": "Жим одной ногой",
                   "sets": [
                         {
                               "row": 32,
-                              "prev": "39х12",
+                              "prev": "39х10",
                               "target": "39х10"
                         },
                         {
                               "row": 33,
-                              "prev": "52х8",
+                              "prev": "52х10",
                               "target": "52х10"
                         },
                         {
                               "row": 34,
-                              "prev": "60х8",
+                              "prev": "66х8",
                               "target": "66х8"
-                        },
-                        {
-                              "row": 35,
-                              "prev": "60х8",
-                              "target": "60х8"
-                        }
-                  ]
-            },
-            {
-                  "name": "Сгибания ног в тренажере лежа",
-                  "sets": [
-                        {
-                              "row": 36,
-                              "prev": "35х12",
-                              "target": "35х12"
-                        },
-                        {
-                              "row": 37,
-                              "prev": "50х10",
-                              "target": "50х10"
-                        },
-                        {
-                              "row": 38,
-                              "prev": "50х10",
-                              "target": "50х10"
                         }
                   ]
             }
@@ -1031,31 +1021,26 @@
                   ]
             },
             {
-                  "name": "Тяга нижнего блока:  узкий",
+                  "name": "Тяга нижнего блока:   узкий",
                   "sets": [
                         {
                               "row": 50,
-                              "prev": "25х12",
-                              "target": "25х12"
-                        },
-                        {
-                              "row": 51,
-                              "prev": "32х11",
+                              "prev": "32х12",
                               "target": "32х12"
                         },
                         {
-                              "row": 52,
+                              "row": 51,
                               "prev": "37х8",
                               "target": "37х8"
                         },
                         {
-                              "row": 53,
+                              "row": 52,
                               "prev": "37х12",
                               "target": "37х12"
                         },
                         {
-                              "row": 54,
-                              "prev": "37х12",
+                              "row": 53,
+                              "prev": "37х14",
                               "target": "37х14"
                         }
                   ]
@@ -1064,23 +1049,23 @@
                   "name": "Жим штагни лежа на наклонной скамье",
                   "sets": [
                         {
-                              "row": 55,
-                              "prev": "20х10",
+                              "row": 54,
+                              "prev": "20x10",
                               "target": "20x10"
                         },
                         {
-                              "row": 56,
-                              "prev": "25х10",
+                              "row": 55,
+                              "prev": "25x8",
                               "target": "25x8"
                         },
                         {
-                              "row": 57,
-                              "prev": "25х10",
+                              "row": 56,
+                              "prev": "25x12",
                               "target": "25x12"
                         },
                         {
-                              "row": 58,
-                              "prev": "25х10",
+                              "row": 57,
+                              "prev": "25x12",
                               "target": "25x12"
                         }
                   ]
@@ -1089,12 +1074,12 @@
                   "name": "Ротация плеча на блоке",
                   "sets": [
                         {
-                              "row": 60,
-                              "prev": "5х10",
+                              "row": 58,
+                              "prev": "5х12",
                               "target": "5х12"
                         },
                         {
-                              "row": 61,
+                              "row": 59,
                               "prev": "5х12",
                               "target": "5х12"
                         }
@@ -1104,24 +1089,19 @@
                   "name": "У-Подъемы в кроссовере",
                   "sets": [
                         {
-                              "row": 62,
+                              "row": 60,
                               "prev": "5х8",
                               "target": "5х8"
                         },
                         {
-                              "row": 63,
-                              "prev": "5х8",
+                              "row": 61,
+                              "prev": "5х10",
                               "target": "5х10"
                         },
                         {
-                              "row": 64,
-                              "prev": "5х7",
+                              "row": 62,
+                              "prev": "5х10",
                               "target": "5х10"
-                        },
-                        {
-                              "row": 65,
-                              "prev": "В кроссовере",
-                              "target": "В кроссовере"
                         }
                   ]
             },
@@ -1129,29 +1109,24 @@
                   "name": "Жим платформы ногами",
                   "sets": [
                         {
-                              "row": 67,
-                              "prev": "70х12",
+                              "row": 64,
+                              "prev": "150х8",
                               "target": "150х8"
                         },
                         {
-                              "row": 68,
-                              "prev": "100х8",
+                              "row": 65,
+                              "prev": "170х8",
                               "target": "170х8"
                         },
                         {
-                              "row": 69,
-                              "prev": "150х8",
-                              "target": "175х10"
-                        },
-                        {
-                              "row": 70,
+                              "row": 66,
                               "prev": "175х10",
                               "target": "175х10"
                         },
                         {
-                              "row": 71,
+                              "row": 67,
                               "prev": "175х10",
-                              "target": "170х12"
+                              "target": "175х10"
                         }
                   ]
             },
@@ -1159,18 +1134,13 @@
                   "name": "Гиперэкстензия",
                   "sets": [
                         {
-                              "row": 73,
-                              "prev": "10х12",
-                              "target": "25х10"
-                        },
-                        {
-                              "row": 74,
+                              "row": 70,
                               "prev": "25х10",
                               "target": "25х10"
                         },
                         {
-                              "row": 75,
-                              "prev": "20х12",
+                              "row": 71,
+                              "prev": "25х10",
                               "target": "25х10"
                         }
                   ]
@@ -1179,28 +1149,30 @@
                   "name": "Мертвая тяга",
                   "sets": [
                         {
-                              "row": 77,
-                              "prev": "10х20",
+                              "row": 74,
+                              "prev": "30х12",
                               "target": "30х12"
                         },
                         {
-                              "row": 78,
-                              "prev": "10х25",
+                              "row": 75,
+                              "prev": "35х12",
                               "target": "35х12"
                         },
                         {
-                              "row": 79,
+                              "row": 76,
                               "prev": "40х10",
                               "target": "40х10"
                         },
                         {
-                              "row": 80,
+                              "row": 77,
                               "prev": "40х10",
                               "target": "40х10"
                         }
                   ]
             }
-      ]
+      ],
+      "b1_date": "30.09.2026",
+      "b2_date": "28.09.2026"
 };
   </script>
 
@@ -1254,13 +1226,15 @@
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('api-url-input').value = scriptApiUrl;
       loadWorkoutForBlock(1);
-      updateDateLabel();
     });
 
-    function updateDateLabel() {
-      const options = { weekday: 'short', day: 'numeric', month: 'short' };
-      const todayStr = new Date().toLocaleDateString('ru-RU', options);
-      document.getElementById('workout-date-label').textContent = `Тренировка: ${todayStr}`;
+    function updateDateLabels(prevDate, todayDate) {
+      if (document.getElementById('prev-date-val')) {
+        document.getElementById('prev-date-val').textContent = prevDate || "—";
+      }
+      if (document.getElementById('today-date-val')) {
+        document.getElementById('today-date-val').textContent = todayDate || new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      }
     }
 
     // Переключение блока
@@ -1281,7 +1255,7 @@
       listEl.innerHTML = `
         <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
           <div class="loading-spinner" style="width: 28px; height: 28px; border-width: 3px; margin-bottom: 12px;"></div>
-          <div>Загрузка плана тренировки...</div>
+          <div>Загрузка плана тренировки (вкладка New GYM2)...</div>
         </div>
       `;
 
@@ -1291,9 +1265,8 @@
           const json = await res.json();
           if (json.success && json.data) {
             workoutData = json.data;
-            isAutoGenerated = json.data.isAutoGenerated;
+            updateDateLabels(workoutData.prevDate, workoutData.targetDate);
             renderExercises(workoutData.exercises);
-            updateBadge(isAutoGenerated);
             return;
           }
         } catch (err) {
@@ -1302,12 +1275,22 @@
         }
       }
 
-      // Используем точные данные двух последних столбцов таблицы
+      // Используем точные данные двух последних столбцов таблицы New GYM2
       const rawBlock = blockNum === 1 ? DEFAULT_DATA.block1 : DEFAULT_DATA.block2;
+      const prevDate = (blockNum === 1 ? DEFAULT_DATA.b1_date : DEFAULT_DATA.b2_date) || "30.09.2026";
+      const targetDate = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
       workoutData = {
         block: blockNum,
+        dateRow: (blockNum === 1 ? 2 : 44),
+        prevCol: 2,
+        targetCol: 3,
+        prevDate: prevDate,
+        targetDate: targetDate,
         exercises: JSON.parse(JSON.stringify(rawBlock))
       };
+
+      updateDateLabels(prevDate, targetDate);
       renderExercises(workoutData.exercises);
     }
 
@@ -1571,12 +1554,12 @@
         });
       });
 
-      const todayStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+      const todayStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
       const payload = {
         block: currentBlock,
         date: todayStr,
-        targetCol: workoutData.targetCol || 0,
-        dateRow: workoutData.dateRow || (currentBlock === 1 ? 10 : 53),
+        targetCol: workoutData.targetCol || 3,
+        dateRow: workoutData.dateRow || (currentBlock === 1 ? 2 : 44),
         results: results
       };
 
